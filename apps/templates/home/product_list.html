@@ -1,0 +1,89 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Transactions {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  <div class="card card-body border-0 shadow table-wrapper table-responsive">
+      <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th class="border-gray-200" style="width: 25%">Product</th>
+                  <th class="border-gray-200" style="width: 10%">Price</th>
+                  <th class="border-gray-200" style="width: 65%">Available</th>
+{#                  <th class="border-gray-200" style="width: auto">Action</th>#}
+              </tr>
+          </thead>
+          <tbody>
+              <!-- Item -->
+              {% for product in products %}
+                <tr>
+                    {% if product.size != None %}
+                        <td><span class="fw-normal">{{ product.name }} - {{ product.size }}</span></td>
+                    {% else %}
+                        <td><span class="fw-normal">{{ product.name }}</span></td>
+                    {% endif %}
+                    <td><span class="fw-normal">{{ product.price }}</span></td>
+                    {% if product.available == True %}
+                        <td><span class="fw-normal">YES</span></td>
+                    {% else %}
+                        <td><span class="fw-normal">NO</span></td>
+                    {% endif %}
+{#                    <td>#}
+{#                        <div class="btn-group">#}
+{#                            <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#                                <span class="icon icon-sm">#}
+{#                                    <span class="fas fa-ellipsis-h icon-dark"></span>#}
+{#                                </span>#}
+{#                                <span class="visually-hidden">Toggle Dropdown</span>#}
+{#                            </button>#}
+{#                            <div class="dropdown-menu py-0" style="float: left;">#}
+{#                                <a class="dropdown-item rounded-top" href="#"><span class="fas fa-eye me-2"></span>View Details</a>#}
+{#                                <a class="dropdown-item" href="#"><span class="fas fa-edit me-2"></span>Edit</a>#}
+{#                                <a class="dropdown-item text-danger rounded-bottom" href="#"><span class="fas fa-trash-alt me-2"></span>Remove</a>#}
+{#                            </div>#}
+{#                          </div>#}
+{#                      </td>#}
+                </tr>
+              {% endfor %}
+              <!-- Item -->
+      </table>
+      <div class="card-footer px-3 border-0 d-flex flex-column flex-lg-row align-items-center justify-content-between">
+          <nav aria-label="Page navigation example">
+              <ul class="pagination mb-0">
+
+                  {% if pk != counts_parts|first %}
+                      <li class="page-item">
+                          <a class="page-link" href="{% url 'product_post' pk 'previous' %}">Previous</a>
+                      </li>
+                  {% endif %}
+
+                  {% for count in counts_parts %}
+                    <li id="{{ count }}" class="page-item {% if pk == count%} active {% endif %}">
+                      <a class="page-link" href="{% url 'products' count %}">{{ count }}</a>
+                    </li>
+                  {% endfor %}
+
+                {% if pk != counts_parts|last %}
+                    <li class="page-item">
+                        <a class="page-link" href="{% url 'product_post' pk 'next' %}">Next</a>
+                    </li>
+                {% endif %}
+
+              </ul>
+          </nav>
+          <div class="fw-normal small mt-4 mt-lg-0">
+              Showing <b>{{ product_range_first }}-{{ product_range_last }}</b>
+              out of
+              <b>{{ counts_products }}</b> entries
+          </div>
+      </div>
+  </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
