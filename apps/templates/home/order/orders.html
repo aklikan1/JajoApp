@@ -1,11 +1,19 @@
 {% extends "layouts/base.html" %}
 
+{% load static %}
+
 {% block title %} Transactions {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
 
 {% block content %}
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content"></div>
+        </div>
+    </div>
 
 
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
@@ -14,10 +22,10 @@
           <p class="mb-0">Your web analytics</p>
       </div>
       <div class="btn-toolbar mb-2 mb-md-0">
-          <a href="#" class="btn btn-sm btn-gray-800 d-inline-flex align-items-center">
+          <button class="btn btn-sm btn-gray-800 d-inline-flex align-items-center" id="create-order-view" type="button" name="button">
               <svg class="icon icon-xs me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-              New Order
-          </a>
+              Add Product
+          </button>
       </div>
   </div>
   
@@ -30,7 +38,7 @@
                           <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
                       </svg>
                   </span>
-                  <input type="text" class="form-control" placeholder="Search orders">
+                  <input type="text" class="form-control" placeholder="Search orders" />
               </div>
           </div>
           <div class="col-4 col-md-2 col-xl-1 ps-md-0 text-end">
@@ -55,9 +63,7 @@
           <thead>
               <tr>
                   <th class="border-gray-200">#</th>
-                  <th class="border-gray-200">Bill For</th>						
-                  <th class="border-gray-200">Issue Date</th>
-                  <th class="border-gray-200">Due Date</th>
+                  <th class="border-gray-200">Order</th>
                   <th class="border-gray-200">Total</th>
                   <th class="border-gray-200">Status</th>
                   <th class="border-gray-200">Action</th>
@@ -65,16 +71,45 @@
           </thead>
           <tbody>
               <!-- Item -->
+              {% for order in orders %}
+                  <tr>
+                  <td>
+                      <a href="#" class="fw-bold">
+                          {{ order.id }}
+                      </a>
+                  </td>
+                  <td>
+                      <span class="fw-normal">{{ order.arrival_date }}</span>
+                  </td>
+                  <td><span class="fw-bold">$799,00</span></td>
+                  <td><span class="fw-bold text-warning">Due</span></td>
+                  <td>
+                      <div class="btn-group">
+                          <button class="btn btn-link text-dark dropdown-toggle dropdown-toggle-split m-0 p-0" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <span class="icon icon-sm">
+                                  <span class="fas fa-ellipsis-h icon-dark"></span>
+                              </span>
+                              <span class="visually-hidden">Toggle Dropdown</span>
+                          </button>
+                          <div class="dropdown-menu py-0">
+                              <a class="dropdown-item rounded-top" href="#"><span class="fas fa-eye me-2"></span>View Details</a>
+                              <a class="dropdown-item" href="#"><span class="fas fa-edit me-2"></span>Edit</a>
+                              <a class="dropdown-item text-danger rounded-bottom" href="#"><span class="fas fa-trash-alt me-2"></span>Remove</a>
+                          </div>
+                      </div>
+                  </td>
+              </tr>
+              {% endfor %}
               <tr>
                   <td>
                       <a href="#" class="fw-bold">
-                          456478
+                          {{ 456478 }}
                       </a>
                   </td>
                   <td>
                       <span class="fw-normal">Platinum Subscription Plan</span>
                   </td>
-                  <td><span class="fw-normal">1 May 2020</span></td>                        
+                  <td><span class="fw-normal">1 May 2020</span></td>
                   <td><span class="fw-normal">1 Jun 2020</span></td>
                   <td><span class="fw-bold">$799,00</span></td>
                   <td><span class="fw-bold text-warning">Due</span></td>
@@ -243,8 +278,7 @@
                           </div>
                       </div>
                   </td>
-              </tr> 
-              <!-- Item -->
+              </tr>
               <!-- Item -->
               <tr>
                   <td>
@@ -400,4 +434,18 @@
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+    <script src="{% static 'assets/js/bootstrap.js' %}" type="application/javascript"></script>
+    <script src="{% static 'assets/js/jquery-3.6.1.js' %}" type="application/javascript"></script>
+    <script src="{% static 'js/jquery.bootstrap.modal.forms.js' %}" type="application/javascript"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $("#create-order-view").modalForm({
+                formURL: "{% url 'create-order-view' %}"
+            });
+        });
+
+    </script>
+{% endblock javascripts %}

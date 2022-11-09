@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'apps.home.config.MyConfig',
     'apps',
     'fontawesomefree',
+    'bootstrap_modal_forms',
 ]
 
 AUTH_USER_MODEL = 'apps_home.User'

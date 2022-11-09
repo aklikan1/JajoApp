@@ -62,7 +62,10 @@ class Products(models.Model):
         ordering = ['id']
 
     def __str__(self):
-        return self.name + ' - ' + str(self.size)
+        if self.size is not None:
+            return self.name + ' - ' + str(self.size)
+        else:
+            return self.name
 
 
 class Quantity(models.Model):
@@ -74,17 +77,24 @@ class Quantity(models.Model):
         verbose_name_plural = 'Quantity'
 
     def __str__(self):
-        return str(self.order) + ' : ' + str(self.product)
+        return str(self.order.created.date()) + ' : ' + str(self.product)
 
 
 class Orders(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    order_id = models.PositiveIntegerField(null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
     status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
+    arrival_date = models.ForeignKey('ArrivalDate', on_delete=models.SET_NULL, null=True, blank=False)
 
     class Meta:
         verbose_name_plural = 'Orders'
 
     def __str__(self):
-        return 'Order: ' + str(self.order_id)
+        return str(self.arrival_date)+" - order"
+
+
+class ArrivalDate(models.Model):
+    date = models.DateField(null=True, blank=False)
+
+    def __str__(self):
+        return str(self.date.day)+"."+str(self.date.month)

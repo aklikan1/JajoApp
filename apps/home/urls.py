@@ -16,6 +16,7 @@ urlpatterns = [
     path('products/<str:pk>/<str:parameter>/', views.product_post, name='product_post'),
     path('products/<str:pk>/', views.products_page, name='products'),
     path('orders/', views.orders_page, name='orders'),
+    path('orders/create-order-view', views.OrderCreateView.as_view(), name='create-order-view'),
 
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),

@@ -1,6 +1,7 @@
 from django.forms import ModelForm
-from .models import User
+from .models import User, Quantity, ArrivalDate
 from django import forms
+from bootstrap_modal_forms.forms import BSModalModelForm
 
 
 class UpdateUserImages(ModelForm, forms.Form):
@@ -29,3 +30,12 @@ class UpdateUserProfile(ModelForm, forms.Form):
 
         }
 
+
+class CreateOrder(BSModalModelForm, forms.Form):
+    class Meta:
+        model = Quantity
+        fields = ['product', 'quantity']
+        widgets = {
+            'product': forms.Select(attrs={'class': 'form-control', 'id': 'product', 'label': 'Product'}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'id': 'quantity', 'label': 'Quantity'}),
+        }

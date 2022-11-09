@@ -5,14 +5,16 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django import template
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.urls import reverse
-from django.shortcuts import render
-from django.shortcuts import redirect
+from django.urls import reverse, reverse_lazy
+from django.shortcuts import render, redirect
 
-from .forms import UpdateUserImages, UpdateUserProfile
-from .models import Products
+from .forms import UpdateUserImages, UpdateUserProfile, CreateOrder
+from .models import Products, Orders, ArrivalDate, Status
+
+from bootstrap_modal_forms.generic import BSModalCreateView
 
 import logging
 
@@ -128,5 +130,37 @@ def product_post(request, pk, parameter):
 
 @login_required(login_url='/login/')
 def orders_page(request):
-    context = {'segment': 'orders'}
-    return render(request, 'home/orders.html', context)
+    orders = Orders.objects.filter(user=request.user).all().order_by('-id')
+    for order in orders:
+        pass
+
+    context = {'segment': 'orders', 'orders': orders}
+    return render(request, 'home/order/orders.html', context)
+
+
+class OrderCreateView(BSModalCreateView):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+
+    template_name = 'home/order/create-order.html'
+    form_class = CreateOrder
+    success_message = 'Success: Quantity was created.'
+    success_url = reverse_lazy('orders')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        arrival_date = ArrivalDate.objects.all().last()
+        context['arrival_date'] = arrival_date
+        return context
+
+    def form_valid(self, form):
+        if not self.request.is_ajax():
+            due = Status.objects.filter(status="Due").last()
+            get_form = form.save(commit=False)
+            arrival = ArrivalDate.objects.all().last()
+            order, created = Orders.objects.get_or_create(status=due,
+                                                          defaults={'user': self.request.user, 'status': due,
+                                                                    'arrival_date': arrival})
+            get_form.order = order
+            get_form.save()
+        return HttpResponseRedirect(self.success_url)
